@@ -8,10 +8,11 @@ require 'timeout'
 module Sappho
   module Socket
 
-    class Socket
+    class SafeSocket
 
       def initialize
         @socket = nil
+        @open = false
         @timeout = 10
       end
 
@@ -21,6 +22,34 @@ module Sappho
 
       def timeout timeout
         @timeout = timeout
+      end
+
+      def open host, port
+        wait do
+          @socket.open host, port
+        end
+      end
+
+      def read bytesNeeded
+        wait do
+          @socket.read bytesNeeded
+        end
+      end
+
+      def write str
+        wait do
+          @socket.write str
+        end
+      end
+
+      def close
+        begin
+          wait do
+            @socket.close if @socket
+          end
+        rescue
+        end
+        @socket = nil
       end
 
       private

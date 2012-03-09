@@ -8,7 +8,7 @@ require 'timeout'
 module Sappho
   module Socket
 
-    class Socket
+    class ConnectedSocket < Socket
 
       def initialize
         @socket = nil

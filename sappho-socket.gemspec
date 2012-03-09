@@ -1,5 +1,5 @@
 # -*- encoding: utf-8 -*-
-$:.push File.expand_path("../lib", __FILE__)
+$:.push File.expand_path('../lib', __FILE__)
 require 'sappho-socket/version'
 
 # See http://docs.rubygems.org/read/chapter/20#page85 for info on writing gemspecs
