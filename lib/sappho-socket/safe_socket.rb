@@ -58,13 +58,22 @@ module Sappho
       end
 
       def close
+        actuallyClosed = false
         begin
           timeout @timeout do
-            @socket.close if @open
+            if @open
+              @socket.close
+              actuallyClosed = true
+            end
           end
         rescue
         end
         @open = false
+        actuallyClosed
+      end
+
+      def open?
+        @open
       end
 
       private
