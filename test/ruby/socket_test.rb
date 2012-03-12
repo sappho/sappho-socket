@@ -34,45 +34,16 @@ class SocketTest < Test::Unit::TestCase
   end
 
   def test_attached_session
+    Sappho::Socket::MockSocket.session Sappho::Socket::MockSocketSession.new [
+        { :type => :read, :action => Sappho::Socket::MockSocketRead.new('xyz') },
+        { :type => :write, :action => Sappho::Socket::MockSocketWrite.new('pqr') },
+        { :type => :settle, :action => Sappho::Socket::MockSocketSettle.new(42) }
+    ]
     @socket = Sappho::Socket::SafeSocket.new
-    @socket.attach MockClientInitiatedSocket.new
-    @socket.close
-  end
-
-  class MockClientInitiatedSocket
-
-    def initialize
-      @sequence = 0
-    end
-
-    def attach socket
-      checkSequence 1
-      raise Sappho::Socket::MockSocketSessionError, 'Not test socket' unless socket == self
-    end
-
-    def open host, port
-    end
-
-    def read bytesNeeded
-    end
-
-    def write str
-    end
-
-    def settle seconds
-    end
-
-    def close
-      checkSequence 2
-    end
-
-    private
-
-    def checkSequence number
-      @sequence += 1
-      raise Sappho::Socket::MockSocketSessionError, 'Call sequence error' unless @sequence == number
-    end
-
+    @socket.attach Sappho::Socket::MockSocket.new
+    assert_equal 'xyz', @socket.read(3)
+    @socket.write 'pqr'
+    @socket.settle 42
   end
 
 end
