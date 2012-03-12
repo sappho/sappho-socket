@@ -4,24 +4,28 @@
 # Copyright 2012 Andrew Heald.
 
 require 'timeout'
+require 'socket'
+require 'sappho-socket/connected_socket'
 
 module Sappho
   module Socket
 
     class SafeSocket
 
-      def initialize timeout = 10
+      def SafeSocket.mock session, timeout = 10
+        MockSocket.session session
+        SafeSocket.new(timeout, MockSocket.new)
+      end
+
+      def initialize timeout = 10, socket = ConnectedSocket.new
+        @socket = socket
         @open = false
         @timeout = timeout
       end
 
-      def socket socket, open = false
-        @socket = socket
-        @open = open
-      end
-
-      def timeout timeout
-        @timeout = timeout
+      def attach socket
+        @socket.attach socket
+        @open = true
       end
 
       def open host, port
@@ -29,6 +33,10 @@ module Sappho
           @socket.open host, port
           @open = true
         end
+      end
+
+      def setTimeout timeout
+        @timeout = timeout
       end
 
       def read bytesNeeded
@@ -56,7 +64,6 @@ module Sappho
           end
         rescue
         end
-        @socket = nil
         @open = false
       end
 
