@@ -10,14 +10,14 @@ module Sappho
 
     class SafeSocket
 
-      def initialize
-        @socket = nil
+      def initialize timeout = 10
         @open = false
-        @timeout = 10
+        @timeout = timeout
       end
 
-      def socket socket
+      def socket socket, open = false
         @socket = socket
+        @open = open
       end
 
       def timeout timeout
@@ -25,40 +25,47 @@ module Sappho
       end
 
       def open host, port
-        wait do
+        timeout @timeout do
           @socket.open host, port
+          @open = true
         end
       end
 
       def read bytesNeeded
-        wait do
+        check
+        timeout @timeout do
           @socket.read bytesNeeded
         end
       end
 
       def write str
-        wait do
+        check
+        timeout @timeout do
           @socket.write str
         end
       end
 
+      def settle seconds
+        @socket.settle seconds
+      end
+
       def close
         begin
-          wait do
-            @socket.close if @socket
+          timeout @timeout do
+            @socket.close if @open
           end
         rescue
         end
         @socket = nil
+        @open = false
       end
 
       private
 
-      def wait
-        timeout @timeout do
-          yield
-        end
+      def check
+        raise SocketError, 'Attempt to access unopened TCP/IP socket' unless @open
       end
+
     end
 
   end

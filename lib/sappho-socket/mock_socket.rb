@@ -3,33 +3,29 @@
 # See http://www.gnu.org/licenses/agpl.html for full details of the license terms.
 # Copyright 2012 Andrew Heald.
 
-require 'timeout'
-
 module Sappho
   module Socket
 
-    class Socket
-
-      def initialize
-        @socket = nil
-        @timeout = 10
-      end
+    class MockSocket
 
       def socket socket
-        @socket = socket
       end
 
-      def timeout timeout
-        @timeout = timeout
+      def open host, port
       end
 
-      private
-
-      def wait
-        timeout @timeout do
-          yield
-        end
+      def read bytesNeeded
       end
+
+      def write str
+      end
+
+      def settle seconds
+      end
+
+      def close
+      end
+
     end
 
   end
