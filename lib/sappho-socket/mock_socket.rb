@@ -136,7 +136,8 @@ module Sappho
 
     class MockSocketTimeout
 
-      def action
+      def action *parameters
+        # ignore parameters - this can be used for any action
         raise Timeout::Error
       end
 

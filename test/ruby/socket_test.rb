@@ -10,6 +10,7 @@ class SocketTest < Test::Unit::TestCase
         { :type => :settle, :action => Sappho::Socket::MockSocketSettle.new(42) },
         { :type => :read, :action => Sappho::Socket::MockSocketRead.new('login: ') },
         { :type => :write, :action => Sappho::Socket::MockSocketWrite.new('anon') },
+        { :type => :write, :action => Sappho::Socket::MockSocketTimeout.new },
         { :type => :close, :action => Sappho::Socket::MockSocketClose.new },
         { :type => :attach, :action => Sappho::Socket::MockSocketAttach.new },
         { :type => :attach, :action => Sappho::Socket::MockSocketAttach.new },
@@ -21,7 +22,12 @@ class SocketTest < Test::Unit::TestCase
     @socket.settle 42
     assert_equal 'login: ', @socket.read(7)
     @socket.write 'anon'
+    assert_raises Timeout::Error do
+      @socket.write 'abc'
+    end
     assert @socket.close
+    assert !@socket.open?
+    assert !@socket.close # a second close does not actually close anything
     assert !@socket.open?
     # this should fail because the socket has been closed
     assert_raises SocketError do
@@ -52,6 +58,15 @@ class SocketTest < Test::Unit::TestCase
     assert elapsed > 0.9 and elapsed < 1.1
     assert @socket.close
     assert !@socket.open?
+  end
+
+  def test_sequence_mismatch
+    @socket = Sappho::Socket::SafeSocket.mock Sappho::Socket::MockSocketSession.new [
+        { :type => :open, :action => Sappho::Socket::MockSocketOpen.new('localhost', 80) }
+    ]
+    assert_raises Sappho::Socket::MockSocketSessionError do
+      @socket.settle 42
+    end
   end
 
 end
