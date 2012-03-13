@@ -14,7 +14,7 @@ module Sappho
 
       def SafeSocket.mock session, timeout = 10
         MockSocket.session session
-        SafeSocket.new(timeout, MockSocket.new)
+        SafeSocket.new timeout, MockSocket.new
       end
 
       def initialize timeout = 10, socket = ConnectedSocket.new
