@@ -6,7 +6,7 @@
 module Sappho
   module Socket
     NAME = 'sappho-socket'
-    VERSION = '0.0.1'
+    VERSION = '0.0.2'
     AUTHORS = ['Andrew Heald']
     EMAILS = ['andrew@heald.co.uk']
     HOMEPAGE = 'https://github.com/sappho/sappho-socket/wiki'

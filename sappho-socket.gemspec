@@ -24,5 +24,4 @@ Gem::Specification.new do |s|
   # s.add_development_dependency "rspec"
   # s.add_runtime_dependency "rest-client"
   s.add_development_dependency 'rake', '>= 0.9.2.2'
-
 end
