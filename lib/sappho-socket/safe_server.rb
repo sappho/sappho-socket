@@ -6,7 +6,7 @@
 module Sappho
   module Socket
 
-    require 'sappho-socket/auto_flush_log'
+    require 'sappho-basics/auto_flush_log'
     require 'thread'
     require 'socket'
 
@@ -18,7 +18,7 @@ module Sappho
         @maxClients = maxClients
         @clients = {}
         @mutex = Mutex.new
-        @log = AutoFlushLog.instance
+        @log = Sappho::AutoFlushLog.instance
       end
 
       def serve
