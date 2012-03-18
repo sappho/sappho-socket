@@ -18,7 +18,7 @@ module Sappho
         @maxClients = maxClients
         @clients = {}
         @mutex = Mutex.new
-        @log = Sappho::AutoFlushLog.instance
+        @log = Sappho::ApplicationAutoFlushLog.instance
       end
 
       def serve
