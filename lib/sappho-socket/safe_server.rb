@@ -12,10 +12,11 @@ module Sappho
 
     class SafeServer
 
-      def initialize name, port, maxClients = 10
+      def initialize name, port, maxClients = 10, detailedLogging = false
         @name = name
         @port = port
         @maxClients = maxClients
+        @detailedLogging = detailedLogging
         @clients = {}
         @mutex = Mutex.new
         @log = Sappho::ApplicationAutoFlushLog.instance
@@ -35,13 +36,13 @@ module Sappho
               if clientCount >= @maxClients
                 sleep 1
               else
-                @log.info "listening for new clients on #{@name} server port #{@port}"
+                @log.info "listening for new clients on #{@name} server port #{@port}" if @detailedLogging
                 client = @server.accept
                 ip = client.getpeername
                 ip = (4 ... 8).map{|pos|ip[pos]}.join('.')
                 @mutex.synchronize do
                   @clients[client] = ip
-                  log ip, 'connected'
+                  log ip, 'connected' if @detailedLogging
                 end
                 Thread.new client, ip do | client, ip |
                   socket = SafeSocket.new 30
@@ -54,7 +55,7 @@ module Sappho
                   socket.close
                   @mutex.synchronize do
                     @clients.delete client
-                    log ip, 'disconnected'
+                    log ip, 'disconnected' if @detailedLogging
                   end
                 end
               end
