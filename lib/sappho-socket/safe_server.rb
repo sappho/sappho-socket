@@ -12,10 +12,11 @@ module Sappho
 
     class SafeServer
 
-      def initialize name, port, maxClients = 10, detailedLogging = false
+      def initialize name, port, maxClients = 10, timeout = 10, detailedLogging = false
         @name = name
         @port = port
         @maxClients = maxClients
+        @timeout = timeout
         @detailedLogging = detailedLogging
         @clients = {}
         @mutex = Mutex.new
@@ -41,7 +42,7 @@ module Sappho
                   log ip, 'connected' if @detailedLogging
                 end
                 Thread.new client, ip do | client, ip |
-                  socket = SafeSocket.new 30
+                  socket = SafeSocket.new @timeout
                   socket.attach client
                   begin
                     yield socket, ip, @name, @port
