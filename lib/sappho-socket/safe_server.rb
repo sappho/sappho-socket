@@ -28,11 +28,7 @@ module Sappho
             @log.info "opening #{@name} server port #{@port}"
             @server = TCPServer.open @port
             @log.info "#{@name} server port #{@port} is now open"
-            clientCount = 0
             loop do
-              @mutex.synchronize do
-                clientCount = @clients.size
-              end
               if clientCount >= @maxClients
                 sleep 1
               else
@@ -61,6 +57,12 @@ module Sappho
               end
             end
           end
+        end
+      end
+
+      def clientCount
+        @mutex.synchronize do
+          @clients.size
         end
       end
 
