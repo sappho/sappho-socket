@@ -35,8 +35,7 @@ module Sappho
               else
                 @log.info "listening for new clients on #{@name} server port #{@port}" if @detailedLogging
                 client = @server.accept
-                ip = client.getpeername
-                ip = (4 ... 8).map{|pos|ip[pos]}.join('.')
+                port, ip = Socket.unpack_sockaddr_in(client.getpeername)
                 @mutex.synchronize do
                   @clients[client] = ip
                   log ip, 'connected' if @detailedLogging
